@@ -57,7 +57,7 @@ struct CalendarMonthView: View {
                 }
                 Text(day.number, format: .number)
                     .font(.system(size: 17, weight: day.isToday ? .semibold : .regular, design: .rounded))
-                    .foregroundStyle(day.isToday ? todayForeground : .primary)
+                    .foregroundStyle(numberStyle(isToday: day.isToday))
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .accessibilityElement(children: .ignore)
@@ -74,7 +74,7 @@ struct CalendarMonthView: View {
         renderingMode == .fullColor ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(.primary.opacity(0.3))
     }
 
-    private var todayForeground: AnyShapeStyle {
-        renderingMode == .fullColor ? AnyShapeStyle(Color.white) : AnyShapeStyle(.primary)
+    private func numberStyle(isToday: Bool) -> AnyShapeStyle {
+        isToday && renderingMode == .fullColor ? AnyShapeStyle(Color.white) : AnyShapeStyle(.primary)
     }
 }
