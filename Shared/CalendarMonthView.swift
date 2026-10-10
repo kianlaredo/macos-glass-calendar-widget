@@ -1,3 +1,4 @@
+import AppKit
 import SwiftUI
 import WidgetKit
 
@@ -5,25 +6,35 @@ struct CalendarMonthView: View {
     let grid: CalendarGrid
 
     private let columnWidth: CGFloat = 34
+    private let weekdayFont = Font.system(size: 11, weight: .semibold)
 
     @Environment(\.widgetRenderingMode) private var renderingMode
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(grid.monthTitle)
-                .font(.system(size: 26, weight: .semibold, design: .rounded))
+                .font(.system(size: 17, weight: .semibold))
+                .textCase(.uppercase)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
+                .padding(.leading, titleInset)
             weekdayHeader
             dateRows
         }
+    }
+
+    private var titleInset: CGFloat {
+        guard let firstSymbol = grid.weekdays.first?.shortSymbol else { return 0 }
+        let font = NSFont.systemFont(ofSize: 11, weight: .semibold)
+        let labelWidth = firstSymbol.localizedUppercase.size(withAttributes: [.font: font]).width
+        return max((columnWidth - labelWidth) / 2, 0)
     }
 
     private var weekdayHeader: some View {
         spreadColumns {
             ForEach(grid.weekdays) { weekday in
                 Text(weekday.shortSymbol)
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(weekdayFont)
                     .textCase(.uppercase)
                     .foregroundStyle(weekday.isWeekend ? AnyShapeStyle(.tertiary) : AnyShapeStyle(.secondary))
                     .lineLimit(1)
@@ -65,7 +76,7 @@ struct CalendarMonthView: View {
                         .widgetAccentable()
                 }
                 Text(day.number, format: .number)
-                    .font(.system(size: 17, weight: day.isToday ? .semibold : .regular, design: .rounded))
+                    .font(.system(size: 17, weight: day.isToday ? .semibold : .regular))
                     .foregroundStyle(numberStyle(for: day))
             }
             .frame(width: columnWidth)

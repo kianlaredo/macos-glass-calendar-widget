@@ -87,4 +87,4 @@ Not run (needs a person at the desktop):
 - Transparency and the clear/tinted styles are applied by macOS; there is no adjustable blur.
 - In tinted mode the today marker is a translucent circle marked `widgetAccentable`; its look has not been checked on a real desktop.
 - WidgetKit decides when to refresh, so the midnight update may be delayed. A time-zone change updates on the next system refresh.
-- Day-number text uses the system rounded design only where the renderer honours it.
+- The month title is uppercased by `textCase`; its alignment with the first weekday label is computed from the label's measured width.
