@@ -20,6 +20,8 @@ A minimal native macOS calendar widget: one full month in a large (`systemLarge`
 
 ## Build and install
 
+`make install` builds, copies the app to `~/Applications`, launches it once, quits it, unregisters the duplicate build-folder widget and restarts the widget daemons. Other targets: `make build`, `make test`, `make uninstall`, `make reload`, `make clean`.
+
 ```sh
 xcodebuild -project GlassCalendar.xcodeproj -scheme GlassCalendar -configuration Release build
 ```
