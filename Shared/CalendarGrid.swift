@@ -7,6 +7,7 @@ struct CalendarGrid: Equatable {
         let date: Date
         let number: Int
         let isToday: Bool
+        let isWeekend: Bool
         let accessibilityLabel: String
 
         var id: Date { date }
@@ -16,6 +17,7 @@ struct CalendarGrid: Equatable {
         let id: Int
         let shortSymbol: String
         let fullName: String
+        let isWeekend: Bool
     }
 
     let calendar: Calendar
@@ -63,6 +65,7 @@ struct CalendarGrid: Equatable {
                 date: dayDate,
                 number: calendar.component(.day, from: dayDate),
                 isToday: today.map { calendar.isDate(dayDate, inSameDayAs: $0) } ?? false,
+                isWeekend: calendar.isDateInWeekend(dayDate),
                 accessibilityLabel: dayFormatter.string(from: dayDate)
             )
         }
@@ -81,7 +84,21 @@ struct CalendarGrid: Equatable {
         let fullNames = calendar.standaloneWeekdaySymbols
         return (0..<daysPerWeek).map { position in
             let symbolIndex = (calendar.firstWeekday - 1 + position) % daysPerWeek
-            return Weekday(id: position, shortSymbol: shortSymbols[symbolIndex], fullName: fullNames[symbolIndex])
+            return Weekday(
+                id: position,
+                shortSymbol: shortSymbols[symbolIndex],
+                fullName: fullNames[symbolIndex],
+                isWeekend: isWeekend(weekday: symbolIndex + 1, calendar: calendar)
+            )
         }
+    }
+
+    private static func isWeekend(weekday: Int, calendar: Calendar) -> Bool {
+        let sampleDate = calendar.nextDate(
+            after: Date(timeIntervalSinceReferenceDate: 0),
+            matching: DateComponents(weekday: weekday),
+            matchingPolicy: .nextTime
+        )
+        return sampleDate.map(calendar.isDateInWeekend) ?? false
     }
 }

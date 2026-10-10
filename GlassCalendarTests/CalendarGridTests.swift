@@ -184,3 +184,23 @@ struct CalendarTimelineTests {
         #expect(days == [day, day + 1, day + 2])
     }
 }
+
+struct WeekendTests {
+    @Test func saturdayAndSundayAreWeekendsInUS() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        let weekendNames = CalendarGrid(displaying: .now, calendar: calendar).weekdays.filter(\.isWeekend).map(\.fullName)
+        #expect(weekendNames == ["Sunday", "Saturday"])
+    }
+
+    @Test func weekendFlagFollowsReorderedWeekdays() {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US")
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+        calendar.firstWeekday = 2
+        let grid = CalendarGrid(displaying: .now, calendar: calendar)
+        #expect(grid.weekdays.map(\.isWeekend) == [false, false, false, false, false, true, true])
+        #expect(grid.days.filter(\.isWeekend).allSatisfy { [1, 7].contains(calendar.component(.weekday, from: $0.date)) })
+    }
+}

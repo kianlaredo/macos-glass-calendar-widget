@@ -13,6 +13,7 @@ A minimal native macOS calendar widget: one full month in a large (`systemLarge`
 - Exactly one month, filling the large widget; 4-, 5- and 6-row months all fit
 - Month title, weekday headers and first weekday follow the system locale and calendar
 - Today highlighted by a circle using the system accent colour (full-colour mode)
+- Weekend columns (header and dates) dimmed; title and columns share the same left and right edges
 - Timeline of daily entries at local midnights, so the highlight and month roll over without polling
 - System-managed background via `containerBackground(.fill.tertiary, for: .widget)`
 - VoiceOver: each day reads its full date, today is announced and marked selected
@@ -57,7 +58,7 @@ xcodebuild -project GlassCalendar.xcodeproj -scheme GlassCalendar test
 
 ## Test results
 
-Passed (22 tests, `xcodebuild test`):
+Passed (24 tests, `xcodebuild test`):
 
 - Day counts for all twelve months of a non-leap year; leap and non-leap February
 - Months starting on Sunday and Monday; Sunday, Monday and Saturday week starts
@@ -66,6 +67,7 @@ Passed (22 tests, `xcodebuild test`):
 - Today highlight only in its own month; today differs by time zone
 - Month title in en_US, fr_FR, de_DE, ja_JP; Islamic (Umm al-Qura) month lengths
 - VoiceOver date label
+- Weekend flags follow the locale and the first-weekday setting
 - Timeline entries at local midnights, month boundary, DST days (New York, Berlin)
 
 Verified manually:
