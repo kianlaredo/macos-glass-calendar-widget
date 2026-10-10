@@ -5,19 +5,22 @@ import WidgetKit
 struct CalendarMonthView: View {
     let grid: CalendarGrid
 
+    fileprivate static let titleFontSize: CGFloat = 17
+    fileprivate static let dayFontSize: CGFloat = 17
     private let columnWidth: CGFloat = 34
     private let weekdayFont = Font.system(size: 11, weight: .semibold)
 
     @Environment(\.widgetRenderingMode) private var renderingMode
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+        MonthLayout(rowCount: grid.rowCount, spacing: 10) {
             Text(grid.monthTitle)
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: Self.titleFontSize, weight: .semibold))
                 .textCase(.uppercase)
                 .lineLimit(1)
                 .minimumScaleFactor(0.6)
                 .padding(.leading, titleInset)
+                .frame(maxWidth: .infinity, alignment: .leading)
             weekdayHeader
             dateRows
         }
@@ -76,7 +79,7 @@ struct CalendarMonthView: View {
                         .widgetAccentable()
                 }
                 Text(day.number, format: .number)
-                    .font(.system(size: 17, weight: day.isToday ? .semibold : .regular))
+                    .font(.system(size: Self.dayFontSize, weight: day.isToday ? .semibold : .regular))
                     .foregroundStyle(numberStyle(for: day))
             }
             .frame(width: columnWidth)
@@ -126,5 +129,45 @@ private struct SpreadLayout: Layout {
             )
             originX += width + gap
         }
+    }
+}
+
+private struct MonthLayout: Layout {
+    let rowCount: Int
+    let spacing: CGFloat
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        CGSize(width: proposal.width ?? 0, height: proposal.height ?? 0)
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        guard subviews.count == 3 else { return }
+        let proposedWidth = ProposedViewSize(width: bounds.width, height: nil)
+        let titleHeight = subviews[0].sizeThatFits(proposedWidth).height
+        let headerHeight = subviews[1].sizeThatFits(proposedWidth).height
+        let rowsTop = bounds.minY + titleHeight + headerHeight + 2 * spacing
+        let availableHeight = bounds.maxY - rowsTop
+        let rowsHeight = availableHeight + bottomOverhang(availableHeight: availableHeight)
+
+        subviews[0].place(at: CGPoint(x: bounds.minX, y: bounds.minY), proposal: proposedWidth)
+        subviews[1].place(
+            at: CGPoint(x: bounds.minX, y: bounds.minY + titleHeight + spacing),
+            proposal: proposedWidth
+        )
+        subviews[2].place(
+            at: CGPoint(x: bounds.minX, y: rowsTop),
+            proposal: ProposedViewSize(width: bounds.width, height: rowsHeight)
+        )
+    }
+
+    private func bottomOverhang(availableHeight: CGFloat) -> CGFloat {
+        let titleFont = NSFont.systemFont(ofSize: CalendarMonthView.titleFontSize, weight: .semibold)
+        let dayFont = NSFont.systemFont(ofSize: CalendarMonthView.dayFontSize)
+        let titleTopGap = titleFont.ascender - titleFont.capHeight
+        let dayLineHeight = dayFont.ascender - dayFont.descender
+        let dayBelowBaseline = -dayFont.descender
+        let rows = CGFloat(max(rowCount, 1))
+        let overhang = (availableHeight / rows - dayLineHeight + 2 * (dayBelowBaseline - titleTopGap)) / (2 - 1 / rows)
+        return max(overhang, 0)
     }
 }
