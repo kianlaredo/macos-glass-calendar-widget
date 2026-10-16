@@ -24,3 +24,7 @@ make uninstall
 ```
 
 This quits the app, unregisters the widget, removes `~/Applications/GlassCalendar.app` and restarts the widget daemons.
+
+## Attribution
+
+Fully made with Claude, since I don't write Swift.
