@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 struct CalendarWidgetView: View {
-    private static let calendarAppURL = URL(string: "ical://")
+    private static let calendarAppURL = URL(string: "glasscalendar://open-calendar")
 
     let entry: CalendarEntry
 
