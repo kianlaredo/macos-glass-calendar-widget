@@ -5,7 +5,7 @@ A minimal macOS widget showing one full month, with today highlighted.
 ## Requirements
 
 - macOS 26 or newer
-- Xcode 26 or newer
+- Xcode 26 or newer, or just the Command Line Tools (`make install-clt`)
 
 ## Install
 
