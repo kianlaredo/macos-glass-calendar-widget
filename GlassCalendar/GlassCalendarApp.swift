@@ -6,13 +6,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private static let builtInCalendarBundleIdentifier = "com.apple.iCal"
 
     private var isDefaultLaunch = true
+    private var hasFinishedLaunching = false
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        hasFinishedLaunching = true
         isDefaultLaunch = notification.userInfo?[NSApplication.launchIsDefaultUserInfoKey] as? Bool ?? true
     }
 
     func application(_ application: NSApplication, open urls: [URL]) {
         guard urls.contains(where: { $0.scheme == "glasscalendar" }) else { return }
+        if !hasFinishedLaunching {
+            application.setActivationPolicy(.prohibited)
+        }
         openDefaultCalendarApp()
         DispatchQueue.main.async { [self] in
             guard !isDefaultLaunch else { return }
